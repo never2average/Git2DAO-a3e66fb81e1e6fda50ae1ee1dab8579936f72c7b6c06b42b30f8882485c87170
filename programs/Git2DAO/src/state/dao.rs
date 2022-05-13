@@ -7,18 +7,16 @@ pub struct Dao {
     repo_owner_pk: Pubkey, // 32
     issue_count: u16,      // 2
     total_sol_staked: u64, // 8
-    rent: u64,             // 8
 }
 
 impl Dao {
-    pub const LEN: usize = 8 + 128 + 32 + 2 + 8 + 8;
+    pub const LEN: usize = 8 + 128 + 32 + 2 + 8;
 
     pub fn create_dao(&mut self, repo_url: String, repo_owner_pk: Pubkey) {
         self.repo_url = repo_url.into_bytes();
         self.repo_owner_pk = repo_owner_pk;
         self.issue_count = 0;
         self.total_sol_staked = 0;
-        self.rent = Rent::default().minimum_balance(Dao::LEN);
     }
 
     pub fn dao_update_issue_raised(&mut self, sol_staked: u64) -> Result<()> {
@@ -26,7 +24,6 @@ impl Dao {
 
         require!(new_issue_count.is_some(), DaoError::IssueOverflow);
         self.issue_count = new_issue_count.unwrap();
-
         self.stake_sol(sol_staked).unwrap();
         Ok(())
     }
@@ -37,7 +34,7 @@ impl Dao {
         Ok(())
     }
 
-    fn stake_sol(&mut self, amount: u64) -> Result<()> {
+    pub fn stake_sol(&mut self, amount: u64) -> Result<()> {
         let new_total_sol_staked = self.total_sol_staked.checked_add(amount.into());
 
         require!(new_total_sol_staked.is_some(), DaoError::StakeOverflow);
@@ -51,9 +48,5 @@ impl Dao {
 
     pub fn get_total_sol_staked(&self) -> u64 {
         self.total_sol_staked
-    }
-
-    pub fn get_rent_price(&self) -> u64 {
-        self.rent
     }
 }

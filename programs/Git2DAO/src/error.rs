@@ -7,4 +7,5 @@ pub enum DaoError {
     IssueOverflow,
     StakeOverflow,
     ThresholdNotMet,
+    IssueAlreadyRaised,
 }

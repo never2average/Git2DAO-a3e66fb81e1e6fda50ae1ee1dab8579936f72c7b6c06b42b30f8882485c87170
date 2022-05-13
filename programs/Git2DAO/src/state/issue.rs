@@ -9,16 +9,17 @@ pub struct Issue {
     sol_staked: u64,             // 8
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq,Copy)]
 pub enum IssueState {
-    Open,
+    NotFunded,
+    Funded,
     Closed,
 }
 
 impl Issue {
     pub const LEN: usize = 8 + 2 + 32 + 32 + 1 + 8;
 
-    pub const STAKETHRESHOLD: u64 = 1_000_000_000;
+    pub const STAKETHRESHOLD: u64 = 10_000;
 
     pub fn raise_issue(
         &mut self,
@@ -30,9 +31,13 @@ impl Issue {
         self.dao_pk = dao_pk;
         self.issue_raiser_pubkey = issue_raiser_pubkey;
         self.sol_staked = sol_staked;
-        self.issue_state = IssueState::Open;
+        self.issue_state = IssueState::Funded;
         self.issue_num = issue_num;
     }
 
     pub fn close_isssue() {}
+
+    pub fn get_issue_state(&self) -> IssueState {
+        self.issue_state
+    }
 }

@@ -15,9 +15,14 @@ pub mod git2_dao {
         instructions::create_dao::create_dao(ctx, repo_url)
     }
 
-    pub fn raise_issue(ctx: Context<RaiseIssue>) -> Result<()> {
-        instructions::raise_issue::raise_issue(ctx)
+    pub fn register(ctx: Context<Register>) -> Result<()> {
+        instructions::register::register(ctx)
     }
+
+    pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64) -> Result<()> {
+        instructions::raise_issue::raise_issue(ctx, sol_staked)
+    }
+
 
     // pub fn syncState(ctx: Context<Initialize>) -> Result<()> {
     //     Ok(())

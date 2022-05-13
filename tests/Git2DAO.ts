@@ -10,11 +10,14 @@ describe("Git2DAO", () => {
 
   const program = anchor.workspace.Git2Dao as Program<Git2Dao>;
   const programProvider = program.provider as anchor.AnchorProvider;
+  const repo_keypair = programProvider.wallet;
+
+  const dao_keypair = anchor.web3.Keypair.generate();
+  const issue_keypair = anchor.web3.Keypair.generate();
+  const issue_raiser_keypair = anchor.web3.Keypair.generate();
+  const user_keypair = anchor.web3.Keypair.generate();
 
   it("dao created!", async () => {
-
-    const dao_keypair = anchor.web3.Keypair.generate();
-    const repo_keypair = programProvider.wallet;
     
     const repo_link = "https://github.com/never2average/Git2DAO-"+byteToHexString(repo_keypair.publicKey.toBytes());
 
@@ -24,14 +27,54 @@ describe("Git2DAO", () => {
                  owner: repo_keypair.publicKey
                })
                .signers([dao_keypair])
-               .rpc();
+               .rpc()
 
-    let dao_state = await program.account.dao.fetch(dao_keypair.publicKey);
+    const dao_state = await program.account.dao.fetch(dao_keypair.publicKey);
     console.log(dao_state);
 
     console.assert(repo_link === String.fromCharCode.apply(null,dao_state.repoUrl),"unexpected repo_link");
 
   });
+
+  it("user registered!", async () => {
+
+    const sign1 = await programProvider.connection.requestAirdrop(user_keypair.publicKey, 1000000000);
+    await program.provider.connection.confirmTransaction(sign1);
+
+    await program.methods.register()
+               .accounts({
+                 user:  issue_raiser_keypair.publicKey,
+                 owner: user_keypair.publicKey
+               })
+               .signers([issue_raiser_keypair,user_keypair])
+               .rpc();
+
+    const user_state = await program.account.user.fetch(issue_raiser_keypair.publicKey);
+    console.log(user_state);
+
+  });
+
+  it("issue raised!", async () => {
+
+    const sign2 = await programProvider.connection.requestAirdrop(issue_raiser_keypair.publicKey, 1000000000);
+    await program.provider.connection.confirmTransaction(sign2);
+
+    const sol_staked = new anchor.BN(1000000);
+
+    await program.methods.raiseIssue(sol_staked)
+               .accounts({
+                 issue: issue_keypair.publicKey,
+                 issueRaiser: issue_raiser_keypair.publicKey,
+                 dao: dao_keypair.publicKey
+               })
+               .signers([issue_keypair,issue_raiser_keypair])
+               .rpc();
+
+    const issue_state = await program.account.issue.fetch(issue_keypair.publicKey);
+    console.log(issue_state);
+
+  });
+
 });
 
 
