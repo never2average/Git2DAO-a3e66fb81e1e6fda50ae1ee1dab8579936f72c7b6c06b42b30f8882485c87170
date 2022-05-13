@@ -12,27 +12,39 @@ describe("Git2DAO", () => {
   const programProvider = program.provider as anchor.AnchorProvider;
 
   it("dao created!", async () => {
+
     const dao_keypair = anchor.web3.Keypair.generate();
     const repo_keypair = programProvider.wallet;
+    
+    const repo_link = "https://github.com/never2average/Git2DAO-"+byteToHexString(repo_keypair.publicKey.toBytes());
 
-    const repo_link = "https://github.com/never2average/Git2DAO-a3e66fb81e1e6fda50ae1ee1dab8579936f72c7b6c06b42b30f8882485c87170";
-
-    const tx = await program.methods.create_Dao(repo_link)
-               accounts({
+    await program.methods.createDao(repo_link)
+               .accounts({
                  dao:  dao_keypair.publicKey,
                  owner: repo_keypair.publicKey
                })
                .signers([dao_keypair])
                .rpc();
 
-    let dao_state = await program.account.game.fetch(dao_keypair.publicKey);
+    let dao_state = await program.account.dao.fetch(dao_keypair.publicKey);
     console.log(dao_state);
 
-    // console.assert(repo_link === String.fromCharCode.apply(null,dao_state.repo_url),"unexpected repo_link");
+    console.assert(repo_link === String.fromCharCode.apply(null,dao_state.repoUrl),"unexpected repo_link");
 
-    // console.assert(owner.publicKey.to === String.fromCharCode.apply(null,dao_state.repo_url),"unexpected repo_link");
-
-
-    // console.log("Your transaction signature", tx);
   });
 });
+
+
+function byteToHexString(uint8arr) {
+  if (!uint8arr) {
+    return '';
+  }
+  
+  var hexStr = '';
+  for (var i = 0; i < uint8arr.length; i++) {
+    var hex = (uint8arr[i] & 0xff).toString(16);
+    hex = (hex.length === 1) ? '0' + hex : hex;
+    hexStr += hex;
+  }
+  return hexStr
+}

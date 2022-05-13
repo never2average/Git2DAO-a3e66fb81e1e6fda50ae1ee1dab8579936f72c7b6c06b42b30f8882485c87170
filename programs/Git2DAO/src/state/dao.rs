@@ -1,11 +1,9 @@
 use crate::error::DaoError;
 use anchor_lang::prelude::*;
 
-pub type Url = Vec<u8>;
-
 #[account]
 pub struct Dao {
-    repo_url: Url,         // max 128
+    repo_url: Vec<u8>,         // max 128
     repo_owner_pk: Pubkey, // 32
     issue_count: u16,      // 2
     total_sol_staked: u64, // 8
@@ -13,7 +11,7 @@ pub struct Dao {
 }
 
 impl Dao {
-    pub const LEN: usize = 8 + 128 + 32 + 8 + 8;
+    pub const LEN: usize = 8 + 128 + 32 + 2 + 8 + 8;
 
     pub fn create_dao(&mut self, repo_url: String, repo_owner_pk: Pubkey) {
         self.repo_url = repo_url.into_bytes();

@@ -6,9 +6,9 @@ pub fn create_dao(ctx: Context<CreateDao>, repo_url: String) -> Result<()> {
     let n = repo_url.len();
     require!(n <= 128, DaoError::InvalidUrlLength);
 
-    let url_hex: [u8; 64] = repo_url.as_bytes()[n - 65..n].try_into().unwrap();
+    let url_hex: [u8; 64] = repo_url.as_bytes()[n - 64..n].try_into().unwrap();
 
-    let url_pk: [u8; 32] = hex::decode(url_hex).unwrap().try_into().unwrap();
+    let url_pk: [u8; 32] = hex::decode(url_hex).unwrap().as_slice().try_into().unwrap();
     let url_pk = Pubkey::new_from_array(url_pk);
 
     let repo_owner_pk = ctx.accounts.owner.key();
