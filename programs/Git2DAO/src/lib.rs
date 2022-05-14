@@ -1,5 +1,6 @@
 use anchor_lang::prelude::*;
 use instructions::*;
+use state::commit::CommitType;
 
 pub mod error;
 pub mod instructions;
@@ -19,28 +20,29 @@ pub mod git2_dao {
         instructions::register::register(ctx)
     }
 
-    pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64) -> Result<()> {
-        instructions::raise_issue::raise_issue(ctx, sol_staked)
+    pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64,issue_num: u16) -> Result<()> {
+        instructions::raise_issue::raise_issue(ctx, sol_staked,issue_num)
     }
 
+    pub fn add_commit(
+        ctx: Context<AddCommit>,
+        tree_hash: [u8; 20],
+        parent_hash: [u8; 20],
+        commit_type: CommitType
+    ) -> Result<()>{
+        instructions::add_commit::add_commit(
+            ctx,
+            tree_hash,
+            parent_hash,
+            commit_type
+        )
+    }
 
-    // pub fn syncState(ctx: Context<Initialize>) -> Result<()> {
-    //     Ok(())
-    // }
-
-    // pub fn submitSolution(ctx: Context<Initialize>) -> Result<()> {
-    //     Ok(())
-    // }
-
-    // pub fn pingFRT(ctx: Context<Initialize>) -> Result<()> {
-    //     Ok(())
-    // }
-
-    // pub fn stakeFRT(ctx: Context<Initialize>) -> Result<()> {
-    //     Ok(())
-    // }
-
-    // pub fn distributeOSD(ctx: Context<Initialize>) -> Result<()> {
-    //     Ok(())
-    // }
+    pub fn close_issue(ctx: Context<CloseIssue>) -> Result<()>{
+        instructions::close_issue::close_issue(ctx)
+    }
+    
+    pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()>{
+        instructions::claim_reward::claim_reward(ctx)
+    }
 }
