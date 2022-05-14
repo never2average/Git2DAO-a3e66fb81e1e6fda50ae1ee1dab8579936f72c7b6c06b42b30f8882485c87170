@@ -2,14 +2,14 @@ use anchor_lang::prelude::*;
 
 #[account]
 pub struct Issue {
-    pub issue_num: u16,              // 2
-    pub dao: Pubkey,                 // 32
-    pub issue_raiser: Pubkey,        // 32
-    pub issue_state: IssueState,     // 1
-    pub sol_staked: u64,             // 8
+    issue_num: u16,              // 2
+    dao_pk: Pubkey,              // 32
+    issue_raiser_pubkey: Pubkey, // 32
+    issue_state: IssueState,     // 1
+    sol_staked: u64,             // 8
 }
 
-#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq, Copy)]
+#[derive(AnchorSerialize, AnchorDeserialize, Clone, PartialEq,Copy)]
 pub enum IssueState {
     NotFunded,
     Funded,
@@ -24,18 +24,20 @@ impl Issue {
     pub fn raise_issue(
         &mut self,
         issue_num: u16,
-        dao: Pubkey,
-        issue_raiser: Pubkey,
+        dao_pk: Pubkey,
+        issue_raiser_pubkey: Pubkey,
         sol_staked: u64,
     ) {
-        self.dao = dao;
-        self.issue_raiser = issue_raiser;
+        self.dao_pk = dao_pk;
+        self.issue_raiser_pubkey = issue_raiser_pubkey;
         self.sol_staked = sol_staked;
         self.issue_state = IssueState::Funded;
         self.issue_num = issue_num;
     }
 
-    pub fn close_issue(&mut self) {
-        self.issue_state = IssueState::Closed;
+    pub fn close_isssue() {}
+
+    pub fn get_issue_state(&self) -> IssueState {
+        self.issue_state
     }
 }

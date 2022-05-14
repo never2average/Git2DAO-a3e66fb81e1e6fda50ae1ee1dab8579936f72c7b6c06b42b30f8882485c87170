@@ -16,7 +16,6 @@ describe("Git2DAO", () => {
   const issue_keypair = anchor.web3.Keypair.generate();
   const issue_raiser_keypair = anchor.web3.Keypair.generate();
   const user_keypair = anchor.web3.Keypair.generate();
-  const dummy_commit_keypair = anchor.web3.Keypair.generate();
 
   it("dao created!", async () => {
     
@@ -61,67 +60,18 @@ describe("Git2DAO", () => {
     await program.provider.connection.confirmTransaction(sign2);
 
     const sol_staked = new anchor.BN(1000000);
-    const issue_num = 2;
 
-    await program.methods.raiseIssue(sol_staked,issue_num)
+    await program.methods.raiseIssue(sol_staked)
                .accounts({
                  issue: issue_keypair.publicKey,
                  issueRaiser: issue_raiser_keypair.publicKey,
-                 owner: user_keypair.publicKey,
                  dao: dao_keypair.publicKey
                })
-               .signers([issue_keypair,user_keypair])
+               .signers([issue_keypair,issue_raiser_keypair])
                .rpc();
 
     const issue_state = await program.account.issue.fetch(issue_keypair.publicKey);
     console.log(issue_state);
-
-
-
-  });
-
-
-  it("commit added!", async () => {
-    
-    const tree_hash = [1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20];
-    const commit_hash = [20,19,18,17,16,15,14,13,12,11,10,9,8,7,6,5,4,3,2,1];
-    const commit_type = {dummy: {}};
-
-    await program.methods.addCommit(tree_hash,commit_hash,commit_type)
-               .accounts({
-                 commit: dummy_commit_keypair.publicKey,
-                 issue: issue_keypair.publicKey,
-                 dao: dao_keypair.publicKey,
-                 owner: repo_keypair.publicKey
-               })
-               .signers([dummy_commit_keypair])
-               .rpc();
-
-    const commit_state = await program.account.commit.fetch(dummy_commit_keypair.publicKey);
-    console.log(commit_state);
-
-    const dao_state = await program.account.dao.fetch(dao_keypair.publicKey);
-    console.log(dao_state);
-
-  });
-
-  it("issue closed!", async () => {
-
-    await program.methods.closeIssue()
-               .accounts({
-                 issue: issue_keypair.publicKey,
-                 issueRaiser: issue_raiser_keypair.publicKey,
-                 dao: dao_keypair.publicKey,
-                 owner: user_keypair.publicKey
-               })
-               .signers([user_keypair])
-               .rpc();
-
-    const issue_state = await program.account.issue.fetch(issue_keypair.publicKey);
-    console.log(issue_state);
-
-    const dao_state = await program.account.dao.fetch(dao_keypair.publicKey);
-    console.log(dao_state);
 
   });
 

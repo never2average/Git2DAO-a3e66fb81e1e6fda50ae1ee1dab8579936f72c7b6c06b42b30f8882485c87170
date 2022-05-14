@@ -6,14 +6,14 @@ use crate::state::{
 };
 use anchor_lang::prelude::*;
 
-pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64,issue_num: u16) -> Result<()> {
+pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64) -> Result<()> {
     let dao = &mut ctx.accounts.dao;
     let dao_pk = dao.key();
     let issue = &mut ctx.accounts.issue;
     let issue_raiser = &mut ctx.accounts.issue_raiser;
 
     require!(
-        issue.issue_state == IssueState::NotFunded,
+        issue.get_issue_state() == IssueState::NotFunded,
         DaoError::IssueAlreadyRaised
     );
 
@@ -31,6 +31,8 @@ pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64,issue_num: u16) -> 
     *(*issue_raiser.to_account_infos()[0].lamports.borrow_mut()) =
         issue_raiser_balance - sol_staked;
 
+    let issue_num = dao.get_issue_count();
+
     issue.raise_issue(issue_num, dao_pk, issue_raiser.key(), sol_staked);
 
     Ok(())
@@ -38,13 +40,11 @@ pub fn raise_issue(ctx: Context<RaiseIssue>, sol_staked: u64,issue_num: u16) -> 
 
 #[derive(Accounts)]
 pub struct RaiseIssue<'info> {
-    #[account(init, payer = owner, space = Issue::LEN)]
+    #[account(init, payer = issue_raiser, space = Issue::LEN)]
     pub issue: Account<'info, Issue>,
-    #[account(mut,has_one = owner)]
+    #[account(signer,mut)]
     pub issue_raiser: Account<'info, User>,
     #[account(mut)]
     pub dao: Account<'info, Dao>,
-    #[account(mut)]
-    pub owner: Signer<'info>,
-    pub system_program: Program<'info, System>
+    pub system_program: Program<'info, System>,
 }
