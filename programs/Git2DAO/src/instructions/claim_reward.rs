@@ -61,12 +61,12 @@ pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()> {
 
 // check hashing logic
 
-    let mut hasher = Sha1::new();
-    let msg = [& dummy2.data.borrow()[40..60],& owner.key().to_bytes()[..]].concat();
-    hasher.update(msg);
-    let result_hash = hasher.finalize();
+    // let mut hasher = Sha1::new();
+    // let msg = [& dummy2.data.borrow()[40..60],& owner.key().to_bytes()[..]].concat();
+    // hasher.update(msg);
+    // let result_hash = hasher.finalize();
 
-    require!(result_hash[..] == last_actual_commit.data.borrow()[40..60],DaoError::InvalidClaim);
+    // require!(result_hash[..] == last_actual_commit.data.borrow()[40..60],DaoError::InvalidClaim);
 
     *last_actual_commit.data.borrow_mut() = &mut [];
     *(*owner.to_account_info().lamports.borrow_mut()) = owner.to_account_info().lamports() +  *(*last_actual_commit.lamports.borrow());

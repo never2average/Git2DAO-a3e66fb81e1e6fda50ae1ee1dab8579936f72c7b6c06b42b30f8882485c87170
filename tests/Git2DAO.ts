@@ -20,7 +20,11 @@ describe("Git2DAO", () => {
   const dummy1_commit_keypair = anchor.web3.Keypair.generate();
   const actual_commit_keypair = anchor.web3.Keypair.generate();
   const dummy2_commit_keypair = anchor.web3.Keypair.generate();
+  const dev_keypair = anchor.web3.Keypair.fromSecretKey(Uint8Array.from(
+    [125,5,2,65,216,27,214,108,220,251,228,197,178,28,239,141,103,88,26,113,29,190,225,171,163,104,36,31,122,117,33,113,176,193,92,155,80,67,133,168,26,48,105,46,159,252,186,19,214,252,23,146,116,156,136,164,242,237,164,101,61,8,134,183])
+  );
 
+  console.log("dev_keypair",dev_keypair.publicKey);
 
   it("dao created!", async () => {
     
