@@ -1,7 +1,6 @@
-use crate::error::DaoError;
 use crate::state::{
     dao::Dao,
-    issue::{Issue, IssueState},
+    issue::Issue,
     user::User,
 };
 use anchor_lang::prelude::*;

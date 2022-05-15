@@ -45,4 +45,4 @@ pub mod git2_dao {
     pub fn claim_reward(ctx: Context<ClaimReward>) -> Result<()>{
         instructions::claim_reward::claim_reward(ctx)
     }
-}
+ }

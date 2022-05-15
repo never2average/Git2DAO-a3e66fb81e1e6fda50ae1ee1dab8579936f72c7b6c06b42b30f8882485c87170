@@ -15,7 +15,7 @@ pub enum CommitType {
 }
 
 impl Commit {
-    pub const LEN: usize = 8 + 32 + 20 + 20 + 1 + 1;
+    pub const LEN: usize = 8 + 32 + 20 + 20 + 1;
 
     pub fn add_commit(&mut self,issue: Pubkey,tree_hash: [u8;20],commit_hash:[u8;20],commit_type: CommitType){
         self.issue = issue;

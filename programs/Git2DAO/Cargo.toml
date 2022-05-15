@@ -21,3 +21,4 @@ overflow-checks = true
 [dependencies]
 anchor-lang = "0.24.2"
 hex = "0.4.3"
+sha-1 = "0.10.0"

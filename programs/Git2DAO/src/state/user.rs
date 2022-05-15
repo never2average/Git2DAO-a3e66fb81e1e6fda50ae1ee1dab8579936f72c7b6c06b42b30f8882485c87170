@@ -13,4 +13,8 @@ impl User {
         self.owner = owner_pk;
         self.sol_balance = 0;
     }
+
+    pub fn claimed_reward(&mut self,amount: u64){
+        self.sol_balance = self.sol_balance + amount;             // should do checked_add
+    }
 }

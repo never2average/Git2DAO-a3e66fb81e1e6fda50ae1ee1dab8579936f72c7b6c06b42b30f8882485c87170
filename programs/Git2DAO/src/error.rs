@@ -4,8 +4,13 @@ use anchor_lang::error_code;
 pub enum DaoError {
     InvalidUrlLength,
     InvalidOwner,
+    InvalidProgramOwner,
     IssueOverflow,
     StakeOverflow,
     ThresholdNotMet,
-    IssueAlreadyRaised,
+    InvalidPermission,
+    InvalidCommitChain,
+    NotCommitDataStructure,
+    CommitAlreadyPaid,
+    InvalidClaim
 }
